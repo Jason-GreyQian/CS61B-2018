@@ -202,17 +202,23 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public void changePriority(T item, double priority) {
+        double oldPriority = 0;
+        int index = 0;
         for (int i = 1; i <= size; i++) {
             Node node = getNode(i);
             if (node.item().equals(item)) {
-                double oldPriority = node.priority();
+                // change the priority of the node
+                oldPriority = node.priority();
                 node.myPriority = priority;
-                if (oldPriority < priority) {
-                    sink(i);
-                } else {
-                    swim(i);
-                }
+                index = i;
                 break;
+            }
+        }
+        if (index != 0) {   // find the node and changed the priority
+            if (oldPriority < getNode(index).priority()) { // increase the node's priority, the node should sink
+                sink(index);
+            } else if (oldPriority > getNode(index).priority()) { // decrease the node's priority , the node should swim up
+                swim(index);
             }
         }
         return;
@@ -449,6 +455,23 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             assertEquals(expected[i], pq.removeMin());
             i += 1;
         }
+    }
+
+    /** Add test for test changePriority function */
+    @Test
+    public void testChangePriority() {
+        ArrayHeap<String> pq = new ArrayHeap<>();
+        pq.insert("a", 1);
+        pq.insert("b", 2);
+        pq.insert("c", 3);
+        pq.insert("d", 4);
+        pq.insert("e", 5);
+        pq.insert("f" ,6);
+        pq.insert("g", 7);
+
+        assertEquals("a", pq.peek());
+        pq.changePriority("b", -1);
+        assertEquals("b", pq.peek());
     }
 
 }
