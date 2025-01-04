@@ -109,4 +109,38 @@ public class CountingSort {
 
         return sorted;
     }
+
+    // a faster version
+    public static int[] naiveCountingSortFaster(int[] arr) {
+        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
+        for (int i : arr) {
+            max = Math.max(max, i);
+            min = Math.min(min, i);
+        }
+
+        // count array size adjusted for negative numbers
+        int[] counts = new int[max - min + 1];
+        for (int i : arr) {
+            counts[i - min]++;
+        }
+
+        // positions array to store the starting position of each value
+        int[] positions = new int[counts.length];
+        int startPos = 0;
+        for (int i = 0; i < counts.length; i++) {
+            positions[i] = startPos;
+            startPos += counts[i];
+        }
+
+        // Now we can directly construct the sorted array
+        int[] sorted = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            int idx = arr[i] - min;
+            sorted[positions[idx]] = arr[i];
+            positions[idx]++;
+        }
+
+        return sorted;
+    }
 }
